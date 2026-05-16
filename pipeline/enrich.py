@@ -32,7 +32,9 @@ OUT_CARDS = ROOT / "data" / "cards.json"
 OUT_STATS = ROOT / "data" / "stats.json"
 
 PRICE_CAP = 0.30
-WORD_CAP = 20
+# Word count is computed for every card so players can filter by it, but it is
+# NOT part of legality. The format is just the curator's ≤$0.30 list.
+WORD_CAP = 20  # retained as the default "short rules text" filter threshold
 
 # Layouts that aren't real cards in EDH.
 EXCLUDED_LAYOUTS = {
@@ -183,8 +185,7 @@ def main() -> None:
         ) and (any_price is not None and any_price <= PRICE_CAP) and not is_banned
 
         ninety_nine_eligible = (
-            word_count <= WORD_CAP
-            and any_price is not None
+            any_price is not None
             and any_price <= PRICE_CAP
             and not is_banned
         )

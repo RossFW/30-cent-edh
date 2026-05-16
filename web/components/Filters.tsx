@@ -72,7 +72,7 @@ export function FiltersPanel({
           onChange={(e) => patch({ eligibility: e.target.value as Filters["eligibility"] })}
           className="w-full rounded border border-white/15 bg-black/30 px-2 py-1.5 text-sm"
         >
-          <option value="ninety_nine">99-eligible (≤20w, ≤$0.30)</option>
+          <option value="ninety_nine">99-eligible (≤ $0.30)</option>
           <option value="commander">Commander-eligible</option>
           <option value="any">Any (incl. ineligible)</option>
         </select>

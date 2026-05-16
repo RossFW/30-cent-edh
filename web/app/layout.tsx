@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "20-Word 30-Cent EDH",
+  title: "30 Cent EDH",
   description:
-    "A searchable card database and deck builder for the 20-word, 30-cent Commander format.",
+    "Searchable card database and deck builder for 30 Cent EDH — a Commander format where every card costs $0.30 or less.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="border-b border-white/10 bg-black/30 backdrop-blur">
           <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
             <Link href="/" className="font-semibold tracking-tight">
-              20-Word · 30-Cent <span className="text-emerald-400">EDH</span>
+              30 Cent <span className="text-emerald-400">EDH</span>
             </Link>
             <div className="flex gap-4 text-sm text-white/70">
               <Link href="/" className="hover:text-white">Browse</Link>
