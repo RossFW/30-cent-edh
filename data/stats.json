@@ -6,8 +6,8 @@
     "Experiment Kra"
   ],
   "banned": 2,
-  "ninety_nine_eligible": 19838,
-  "commander_eligible": 975,
+  "ninety_nine_eligible": 21710,
+  "commander_eligible": 1284,
   "word_count_histogram": {
     "7": 458,
     "26": 471,
@@ -61,5 +61,5 @@
     "45": 126,
     "43": 140
   },
-  "generated_at": "2026-05-16T02:54:07Z"
+  "generated_at": "2026-05-16T03:06:26Z"
 }

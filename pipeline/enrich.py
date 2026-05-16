@@ -5,12 +5,23 @@ Outputs:
   data/stats.json    -- counts/breakdowns for the README + sanity-check
 
 Eligibility rules for THIS format:
-  - 99-eligible: word_count <= 20 AND price <= $0.30 AND not on banlist
-                 AND not a Conspiracy / scheme / vanguard / token / digital card
-  - commander-eligible: Scryfall says it's commander-legal in EDH (we map this
-                        from the `type_line` + the `oracle_text`'s "can be
-                        your commander" line) AND price <= $0.30
-                        AND not on banlist
+
+The curator's Google Sheet (the Master Sheet) is the source of truth for
+what's legal. The format AIMS for ≤$0.30 but the curator maintains a buffer
+zone — cards that have drifted slightly above the cap stay legal until they
+either drop back or get explicitly removed/banned. Test case: Griselbrand
+was added to the Sheet intentionally to confirm we honor the Sheet over
+Scryfall's current pricing.
+
+  - 99-eligible: in the Master Sheet AND not on the ban list
+  - commander-eligible: 99-eligible AND Scryfall says it's commander-legal in
+                        EDH (legendary creature/vehicle OR "can be your
+                        commander" text)
+
+Price is still surfaced on every card so players can see it, and the
+"Include cards over $0.30" filter on the site lets people exclude buffer-
+zone cards if they want a strictly-under-cap pool. Banlist + Sheet drive
+legality; pricing is informational.
 """
 
 from __future__ import annotations
@@ -176,18 +187,17 @@ def main() -> None:
 
         type_line = chosen.get("type_line") or ""
         is_banned = key in banned
-        commander_eligible = (
+        # The Sheet is the source of truth. If the card got past the cardpool
+        # join, the curator put it in the Master Sheet. Eligibility = "not banned".
+        # Scryfall pricing is informational only (cards in the curator's buffer
+        # zone may currently exceed $0.30 — e.g. Griselbrand as a test case).
+        ninety_nine_eligible = not is_banned
+        commander_eligible = ninety_nine_eligible and (
             (
                 "Legendary" in type_line
                 and ("Creature" in type_line or "Vehicle" in type_line)
             )
             or CAN_BE_COMMANDER_RE.search(oracle or "") is not None
-        ) and (any_price is not None and any_price <= PRICE_CAP) and not is_banned
-
-        ninety_nine_eligible = (
-            any_price is not None
-            and any_price <= PRICE_CAP
-            and not is_banned
         )
 
         # Image: prefer normal-sized; fall back to card_faces[0] for MDFCs.
