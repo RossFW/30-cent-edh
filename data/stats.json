@@ -1,22 +1,20 @@
 {
   "total_pool": 21722,
-  "matched": 21712,
-  "missing": 1,
-  "missing_sample": [
-    "Experiment Kra"
-  ],
+  "matched": 21713,
+  "missing": 0,
+  "missing_sample": [],
   "banned": 2,
-  "ninety_nine_eligible": 21710,
+  "ninety_nine_eligible": 21711,
   "commander_eligible": 1284,
   "word_count_histogram": {
     "7": 458,
-    "26": 471,
-    "50": 715,
+    "26": 472,
+    "50": 716,
     "27": 476,
     "12": 819,
     "15": 823,
     "42": 154,
-    "8": 502,
+    "8": 501,
     "25": 491,
     "9": 676,
     "1": 419,
@@ -61,5 +59,5 @@
     "45": 126,
     "43": 140
   },
-  "generated_at": "2026-05-16T03:06:26Z"
+  "generated_at": "2026-05-16T03:07:15Z"
 }
