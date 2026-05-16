@@ -45,11 +45,21 @@ export function FiltersPanel({
   return (
     <aside className="space-y-4 rounded-lg border border-white/10 bg-white/5 p-4">
       <div>
-        <label className="mb-1 block text-xs uppercase tracking-wide text-white/50">Search</label>
+        <label className="mb-1 block text-xs uppercase tracking-wide text-white/50">Card name</label>
         <input
-          value={filters.query}
-          onChange={(e) => patch({ query: e.target.value })}
-          placeholder="name, type, rules text..."
+          value={filters.nameQuery}
+          onChange={(e) => patch({ nameQuery: e.target.value })}
+          placeholder='e.g. "Bolt"'
+          className="w-full rounded border border-white/15 bg-black/30 px-2 py-1.5 text-sm placeholder:text-white/30 focus:border-emerald-400 focus:outline-none"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs uppercase tracking-wide text-white/50">Rules text</label>
+        <input
+          value={filters.textQuery}
+          onChange={(e) => patch({ textQuery: e.target.value })}
+          placeholder='e.g. "draw a card"'
           className="w-full rounded border border-white/15 bg-black/30 px-2 py-1.5 text-sm placeholder:text-white/30 focus:border-emerald-400 focus:outline-none"
         />
       </div>

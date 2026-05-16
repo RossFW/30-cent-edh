@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { loadCards, applyFilters, EMPTY_FILTERS, topKeywords, type Filters } from "@/lib/cards";
 import type { Card } from "@/lib/types";
 import { FiltersPanel } from "@/components/Filters";
 import { CardTile } from "@/components/CardTile";
+import { InfiniteSentinel } from "@/components/InfiniteSentinel";
 
 const PAGE_SIZE = 60;
 
@@ -24,6 +25,10 @@ export default function BrowsePage() {
   const keywords = useMemo(() => (cards ? topKeywords(cards, 40) : []), [cards]);
 
   useEffect(() => setVisible(PAGE_SIZE), [filters]);
+
+  const loadMore = useCallback(() => {
+    setVisible((v) => (v < filtered.length ? v + PAGE_SIZE : v));
+  }, [filtered.length]);
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
@@ -46,14 +51,7 @@ export default function BrowsePage() {
           ))}
         </div>
 
-        {visible < filtered.length && (
-          <button
-            onClick={() => setVisible((v) => v + PAGE_SIZE)}
-            className="mx-auto mt-6 block rounded border border-white/15 px-4 py-2 text-sm hover:bg-white/10"
-          >
-            Load {Math.min(PAGE_SIZE, filtered.length - visible)} more
-          </button>
-        )}
+        {visible < filtered.length && <InfiniteSentinel onVisible={loadMore} />}
       </div>
     </div>
   );

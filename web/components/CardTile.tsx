@@ -1,6 +1,5 @@
 "use client";
 import type { Card } from "@/lib/types";
-import { ManaCost } from "./ManaCost";
 
 export function CardTile({
   card,
@@ -13,70 +12,93 @@ export function CardTile({
   onSetCommander?: (card: Card) => void;
   inDeck?: number;
 }) {
-  return (
-    <div className="group rounded-lg border border-white/10 bg-white/5 p-3 transition hover:border-emerald-400/50 hover:bg-white/10">
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <a
-            href={card.scryfall_uri}
-            target="_blank"
-            rel="noreferrer"
-            className="line-clamp-1 font-medium hover:text-emerald-400"
-            title={card.name}
-          >
-            {card.name}
-          </a>
-          <div className="mt-0.5 truncate text-xs text-white/60">{card.type_line}</div>
-        </div>
-        <ManaCost cost={card.mana_cost} />
-      </div>
+  const hasActions = !!(onAdd || onSetCommander);
 
-      {card.image && (
-        // Using img instead of next/image so the static export skips the loader entirely.
+  const body = (
+    <div className="group relative aspect-[5/7] overflow-hidden rounded-xl bg-black/40 shadow-md ring-1 ring-white/10 transition hover:ring-emerald-400/60">
+      {card.image ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={card.image}
           alt={card.name}
           loading="lazy"
-          className="mt-2 aspect-[5/7] w-full rounded-md bg-black/40 object-cover"
+          decoding="async"
+          className="h-full w-full object-cover"
         />
+      ) : (
+        <div className="flex h-full flex-col items-center justify-center gap-1 p-2 text-center text-xs text-white/70">
+          <span className="font-semibold">{card.name}</span>
+          <span className="text-white/40">{card.type_line}</span>
+        </div>
       )}
 
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/70">
-        <span title="Word count" className={card.word_count > 20 ? "text-amber-300" : ""}>
-          {card.word_count}w
-        </span>
-        <span title="Price">${card.price_min?.toFixed(2) ?? "—"}</span>
-        <span className="uppercase">{card.rarity?.[0]}</span>
-        {card.banned && <span className="rounded bg-red-500/30 px-1 text-red-200">BANNED</span>}
-        {!card.banned && card.commander_eligible && (
-          <span className="rounded bg-emerald-500/30 px-1 text-emerald-200">CMDR</span>
-        )}
-        {!card.banned && card.ninety_nine_eligible && (
-          <span className="rounded bg-sky-500/30 px-1 text-sky-200">99</span>
-        )}
-      </div>
+      {/* Word count, top-left */}
+      <span
+        className="absolute left-1.5 top-1.5 rounded bg-black/75 px-1.5 py-0.5 text-[11px] font-semibold leading-tight text-white shadow"
+        title={`${card.word_count} words`}
+      >
+        {card.word_count}w
+      </span>
 
-      {(onAdd || onSetCommander) && (
-        <div className="mt-2 flex gap-2">
+      {/* Price, top-right */}
+      {card.price_min != null && (
+        <span
+          className="absolute right-1.5 top-1.5 rounded bg-black/75 px-1.5 py-0.5 text-[11px] font-semibold leading-tight text-white shadow"
+          title={`$${card.price_min.toFixed(2)}`}
+        >
+          ${card.price_min.toFixed(2)}
+        </span>
+      )}
+
+      {card.banned && (
+        <span className="absolute inset-x-2 bottom-2 rounded bg-red-600/90 px-2 py-0.5 text-center text-[10px] font-bold uppercase tracking-wide text-white">
+          Banned
+        </span>
+      )}
+
+      {inDeck != null && inDeck > 0 && (
+        <span className="absolute bottom-1.5 right-1.5 rounded-full bg-sky-500 px-2 py-0.5 text-xs font-bold text-white shadow">
+          ×{inDeck}
+        </span>
+      )}
+
+      {hasActions && (
+        <div className="absolute inset-x-1.5 bottom-1.5 flex gap-1 opacity-0 transition group-hover:opacity-100">
           {onSetCommander && card.commander_eligible && (
             <button
-              onClick={() => onSetCommander(card)}
-              className="flex-1 rounded bg-emerald-500/20 px-2 py-1 text-xs font-medium text-emerald-200 hover:bg-emerald-500/40"
+              onClick={(e) => {
+                e.preventDefault();
+                onSetCommander(card);
+              }}
+              className="flex-1 rounded bg-emerald-500/95 px-2 py-1 text-[11px] font-semibold text-white shadow hover:bg-emerald-400"
             >
-              Set commander
+              Commander
             </button>
           )}
           {onAdd && card.ninety_nine_eligible && (
             <button
-              onClick={() => onAdd(card)}
-              className="flex-1 rounded bg-sky-500/20 px-2 py-1 text-xs font-medium text-sky-200 hover:bg-sky-500/40"
+              onClick={(e) => {
+                e.preventDefault();
+                onAdd(card);
+              }}
+              className="flex-1 rounded bg-sky-500/95 px-2 py-1 text-[11px] font-semibold text-white shadow hover:bg-sky-400"
             >
-              {inDeck ? `+1 (in deck: ${inDeck})` : "Add to deck"}
+              +1
             </button>
           )}
         </div>
       )}
     </div>
   );
+
+  // Browse mode: clicking the tile opens Scryfall. Deck builder mode: the
+  // hover actions handle clicks, so we render the tile as a non-link element.
+  if (!hasActions) {
+    return (
+      <a href={card.scryfall_uri} target="_blank" rel="noreferrer" className="block" title={card.name}>
+        {body}
+      </a>
+    );
+  }
+  return <div title={card.name}>{body}</div>;
 }

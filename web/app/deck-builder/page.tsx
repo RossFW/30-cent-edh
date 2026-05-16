@@ -17,6 +17,7 @@ import {
 } from "@/lib/deck";
 import { FiltersPanel } from "@/components/Filters";
 import { CardTile } from "@/components/CardTile";
+import { InfiniteSentinel } from "@/components/InfiniteSentinel";
 
 export default function DeckBuilderPage() {
   const [cards, setCards] = useState<Card[] | null>(null);
@@ -145,12 +146,7 @@ export default function DeckBuilderPage() {
           ))}
         </div>
         {visible < filtered.length && (
-          <button
-            onClick={() => setVisible((v) => v + 40)}
-            className="mx-auto mt-6 block rounded border border-white/15 px-4 py-2 text-sm hover:bg-white/10"
-          >
-            Load more
-          </button>
+          <InfiniteSentinel onVisible={() => setVisible((v) => Math.min(v + 40, filtered.length))} />
         )}
       </div>
 

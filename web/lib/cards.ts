@@ -24,7 +24,8 @@ export type SortKey =
   | "released-asc";
 
 export type Filters = {
-  query: string;
+  nameQuery: string;
+  textQuery: string;
   colors: Set<string>;
   colorMode: "exact" | "subset" | "any";
   types: Set<string>;
@@ -43,7 +44,8 @@ export type Filters = {
 };
 
 export const EMPTY_FILTERS: Filters = {
-  query: "",
+  nameQuery: "",
+  textQuery: "",
   colors: new Set(),
   colorMode: "subset",
   types: new Set(),
@@ -84,15 +86,14 @@ export function topKeywords(cards: Card[], limit = 40): string[] {
 }
 
 export function applyFilters(cards: Card[], f: Filters): Card[] {
-  const q = f.query.trim().toLowerCase();
+  const nq = f.nameQuery.trim().toLowerCase();
+  const tq = f.textQuery.trim().toLowerCase();
   const out = cards.filter((c) => {
     if (f.eligibility === "ninety_nine" && !c.ninety_nine_eligible) return false;
     if (f.eligibility === "commander" && !c.commander_eligible) return false;
 
-    if (q) {
-      const hay = `${c.name} ${c.type_line} ${c.oracle_text}`.toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
+    if (nq && !c.name.toLowerCase().includes(nq)) return false;
+    if (tq && !c.oracle_text.toLowerCase().includes(tq)) return false;
 
     if (f.colors.size > 0) {
       const ci = new Set(c.color_identity);
