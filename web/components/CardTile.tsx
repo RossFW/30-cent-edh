@@ -32,24 +32,6 @@ export function CardTile({
         </div>
       )}
 
-      {/* Word count, top-left */}
-      <span
-        className="absolute left-1.5 top-1.5 rounded bg-black/75 px-1.5 py-0.5 text-[11px] font-semibold leading-tight text-white shadow"
-        title={`${card.word_count} words`}
-      >
-        {card.word_count}w
-      </span>
-
-      {/* Price, top-right */}
-      {card.price_min != null && (
-        <span
-          className="absolute right-1.5 top-1.5 rounded bg-black/75 px-1.5 py-0.5 text-[11px] font-semibold leading-tight text-white shadow"
-          title={`$${card.price_min.toFixed(2)}`}
-        >
-          ${card.price_min.toFixed(2)}
-        </span>
-      )}
-
       {card.banned && (
         <span className="absolute inset-x-2 bottom-2 rounded bg-red-600/90 px-2 py-0.5 text-center text-[10px] font-bold uppercase tracking-wide text-white">
           Banned
