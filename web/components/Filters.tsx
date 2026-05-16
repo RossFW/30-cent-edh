@@ -50,7 +50,7 @@ export function FiltersPanel({
         <input
           value={filters.nameQuery}
           onChange={(e) => patch({ nameQuery: e.target.value })}
-          placeholder='e.g. "Bolt"'
+          placeholder='e.g. "Bolt"  ·  use | for OR'
           className="w-full rounded border border-white/15 bg-black/30 px-2 py-1.5 text-sm placeholder:text-white/30 focus:border-emerald-400 focus:outline-none"
         />
       </div>
@@ -60,22 +60,40 @@ export function FiltersPanel({
         <input
           value={filters.textQuery}
           onChange={(e) => patch({ textQuery: e.target.value })}
-          placeholder='e.g. "draw a card"'
+          placeholder='"draw a card" | "+1/+1"'
           className="w-full rounded border border-white/15 bg-black/30 px-2 py-1.5 text-sm placeholder:text-white/30 focus:border-emerald-400 focus:outline-none"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs uppercase tracking-wide text-white/50">Eligibility</label>
-        <select
-          value={filters.eligibility}
-          onChange={(e) => patch({ eligibility: e.target.value as Filters["eligibility"] })}
-          className="w-full rounded border border-white/15 bg-black/30 px-2 py-1.5 text-sm"
-        >
-          <option value="ninety_nine">99-eligible (≤ $0.30)</option>
-          <option value="commander">Commander-eligible</option>
-          <option value="any">Any (incl. ineligible)</option>
-        </select>
+        <label className="mb-1 block text-xs uppercase tracking-wide text-white/50">Type line</label>
+        <input
+          value={filters.typeQuery}
+          onChange={(e) => patch({ typeQuery: e.target.value })}
+          placeholder='e.g. "wizard" | "equipment"'
+          className="w-full rounded border border-white/15 bg-black/30 px-2 py-1.5 text-sm placeholder:text-white/30 focus:border-emerald-400 focus:outline-none"
+        />
+      </div>
+
+      <div className="space-y-1.5 text-sm">
+        <label className="flex cursor-pointer items-center gap-2 text-white/80 hover:text-white">
+          <input
+            type="checkbox"
+            checked={filters.commandersOnly}
+            onChange={(e) => patch({ commandersOnly: e.target.checked })}
+            className="h-3.5 w-3.5 rounded border-white/30 bg-black/30"
+          />
+          Commanders only
+        </label>
+        <label className="flex cursor-pointer items-center gap-2 text-white/60 hover:text-white/90">
+          <input
+            type="checkbox"
+            checked={filters.showIneligible}
+            onChange={(e) => patch({ showIneligible: e.target.checked })}
+            className="h-3.5 w-3.5 rounded border-white/30 bg-black/30"
+          />
+          Include cards over $0.30
+        </label>
       </div>
 
       <div>

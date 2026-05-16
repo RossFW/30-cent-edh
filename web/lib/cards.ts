@@ -30,6 +30,7 @@ export type SortKey =
 export type Filters = {
   nameQuery: string;
   textQuery: string;
+  typeQuery: string;
   colors: Set<string>;
   colorMode: "exact" | "subset" | "any";
   types: Set<string>;
@@ -43,13 +44,15 @@ export type Filters = {
   toughnessMin: number | null;
   toughnessMax: number | null;
   rarities: Set<string>;
-  eligibility: "any" | "ninety_nine" | "commander";
+  commandersOnly: boolean;
+  showIneligible: boolean;
   sort: SortKey;
 };
 
 export const EMPTY_FILTERS: Filters = {
   nameQuery: "",
   textQuery: "",
+  typeQuery: "",
   colors: new Set(),
   colorMode: "subset",
   types: new Set(),
@@ -63,7 +66,8 @@ export const EMPTY_FILTERS: Filters = {
   toughnessMin: null,
   toughnessMax: null,
   rarities: new Set(),
-  eligibility: "ninety_nine",
+  commandersOnly: false,
+  showIneligible: false,
   sort: "edhrec",
 };
 
@@ -89,15 +93,36 @@ export function topKeywords(cards: Card[], limit = 40): string[] {
     .map(([k]) => k);
 }
 
-export function applyFilters(cards: Card[], f: Filters): Card[] {
-  const nq = f.nameQuery.trim().toLowerCase();
-  const tq = f.textQuery.trim().toLowerCase();
-  const out = cards.filter((c) => {
-    if (f.eligibility === "ninety_nine" && !c.ninety_nine_eligible) return false;
-    if (f.eligibility === "commander" && !c.commander_eligible) return false;
+/** Split a search input on the OR pipe (`|`) and trim each clause, dropping
+ *  empties. Returns null if the input is empty so the caller can skip the
+ *  filter altogether. */
+function orClauses(q: string): string[] | null {
+  const parts = q
+    .split("|")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+  return parts.length ? parts : null;
+}
 
-    if (nq && !c.name.toLowerCase().includes(nq)) return false;
-    if (tq && !c.oracle_text.toLowerCase().includes(tq)) return false;
+/** Match a single field against an OR-clause list; clauses AND with each other
+ *  at the top level (handled by the caller), but within a single field any
+ *  clause hitting passes. */
+function matchAnyClause(hay: string, clauses: string[]): boolean {
+  for (const c of clauses) if (hay.includes(c)) return true;
+  return false;
+}
+
+export function applyFilters(cards: Card[], f: Filters): Card[] {
+  const nameClauses = orClauses(f.nameQuery);
+  const textClauses = orClauses(f.textQuery);
+  const typeClauses = orClauses(f.typeQuery);
+  const out = cards.filter((c) => {
+    if (!f.showIneligible && !c.ninety_nine_eligible) return false;
+    if (f.commandersOnly && !c.commander_eligible) return false;
+
+    if (nameClauses && !matchAnyClause(c.name.toLowerCase(), nameClauses)) return false;
+    if (textClauses && !matchAnyClause(c.oracle_text.toLowerCase(), textClauses)) return false;
+    if (typeClauses && !matchAnyClause(c.type_line.toLowerCase(), typeClauses)) return false;
 
     if (f.colors.size > 0) {
       const ci = new Set(c.color_identity);
