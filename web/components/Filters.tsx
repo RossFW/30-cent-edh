@@ -85,6 +85,18 @@ export function FiltersPanel({
           />
           Commanders only
         </label>
+        <label
+          className="flex cursor-pointer items-center gap-2 text-white/80 hover:text-white"
+          title="20-word variant: every card in the 99 has ≤20 words of rules text."
+        >
+          <input
+            type="checkbox"
+            checked={filters.maxWords === 20}
+            onChange={(e) => patch({ maxWords: e.target.checked ? 20 : null })}
+            className="h-3.5 w-3.5 rounded border-white/30 bg-black/30"
+          />
+          ≤ 20 words only <span className="text-white/40">(20-word variant)</span>
+        </label>
         <label className="flex cursor-pointer items-center gap-2 text-white/60 hover:text-white/90">
           <input
             type="checkbox"

@@ -18,6 +18,8 @@ import {
 import { FiltersPanel } from "@/components/Filters";
 import { CardTile } from "@/components/CardTile";
 import { InfiniteSentinel } from "@/components/InfiniteSentinel";
+import { DeckStatsPanel } from "@/components/DeckStats";
+import { computeStats } from "@/lib/deck_stats";
 
 export default function DeckBuilderPage() {
   const [cards, setCards] = useState<Card[] | null>(null);
@@ -86,6 +88,7 @@ export default function DeckBuilderPage() {
 
   const issues = useMemo(() => validate(deck, byName), [deck, byName]);
   const total = totalCards(deck);
+  const stats = useMemo(() => computeStats(deck, byName), [deck, byName]);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -177,6 +180,8 @@ export default function DeckBuilderPage() {
           </div>
         )}
 
+        {(stats.total > 0 || deck.commander) && <DeckStatsPanel stats={stats} />}
+
         <div className="max-h-[50vh] overflow-auto rounded border border-white/10">
           {deck.ninety_nine.length === 0 ? (
             <div className="p-3 text-sm text-white/40">Empty. Add cards from the left.</div>
@@ -187,20 +192,30 @@ export default function DeckBuilderPage() {
                 .map((s) => {
                   const c = byName.get(s.name);
                   return (
-                    <li key={s.name} className="flex items-center justify-between gap-2 px-2 py-1 text-sm">
+                    <li key={s.name} className="group relative flex items-center justify-between gap-2 px-2 py-1 text-sm">
                       <span className="truncate">
                         {s.count > 1 ? `${s.count}× ` : ""}
                         {s.name}
                       </span>
-                      <span className="flex items-center gap-1 text-xs text-white/50">
-                        <span>{c?.word_count ?? "?"}w</span>
-                        <button
-                          onClick={() => setDeck(removeOne(deck, s.name))}
-                          className="rounded px-1 text-white/40 hover:bg-red-500/30 hover:text-red-200"
-                        >
-                          ✕
-                        </button>
-                      </span>
+                      <button
+                        onClick={() => setDeck(removeOne(deck, s.name))}
+                        className="rounded px-1 text-xs text-white/40 hover:bg-red-500/30 hover:text-red-200"
+                        aria-label={`Remove ${s.name}`}
+                      >
+                        ✕
+                      </button>
+                      {c?.image && (
+                        // Hover preview pops out to the LEFT (toward the card grid).
+                        // Pointer-events:none keeps it from interfering with clicks.
+                        <div className="pointer-events-none absolute right-full top-1/2 z-30 mr-2 hidden -translate-y-1/2 group-hover:block">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={c.image}
+                            alt={c.name}
+                            className="w-56 rounded-lg shadow-2xl ring-1 ring-white/10"
+                          />
+                        </div>
+                      )}
                     </li>
                   );
                 })}
