@@ -13,6 +13,7 @@ const COLORS: { code: string; label: string }[] = [
 const RARITIES = ["common", "uncommon", "rare", "mythic"];
 
 const SORT_OPTIONS: { value: Filters["sort"]; label: string }[] = [
+  { value: "edhrec", label: "EDHREC popularity" },
   { value: "name", label: "Name (A→Z)" },
   { value: "cmc-asc", label: "Mana value (low→high)" },
   { value: "cmc-desc", label: "Mana value (high→low)" },

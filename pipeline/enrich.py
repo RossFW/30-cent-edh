@@ -229,6 +229,7 @@ def main() -> None:
             "toughness": toughness,
             "loyalty": loyalty,
             "released_at": chosen.get("released_at"),
+            "edhrec_rank": chosen.get("edhrec_rank"),
         })
 
     cards.sort(key=lambda c: c["name"])

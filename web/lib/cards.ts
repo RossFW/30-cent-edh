@@ -14,6 +14,7 @@ export async function loadCards(): Promise<Card[]> {
 
 export type SortKey =
   | "name"
+  | "edhrec"
   | "cmc-asc"
   | "cmc-desc"
   | "price-asc"
@@ -60,7 +61,7 @@ export const EMPTY_FILTERS: Filters = {
   toughnessMax: null,
   rarities: new Set(),
   eligibility: "ninety_nine",
-  sort: "name",
+  sort: "edhrec",
 };
 
 const TYPE_TOKENS = ["Creature", "Instant", "Sorcery", "Artifact", "Enchantment", "Land", "Planeswalker", "Battle"];
@@ -149,6 +150,13 @@ function compareBySort(s: SortKey): ((a: Card, b: Card) => number) | null {
   switch (s) {
     case "name":
       return (a, b) => a.name.localeCompare(b.name);
+    case "edhrec":
+      // EDHREC rank: lower number = more popular. Unranked sinks to the bottom.
+      return (a, b) => {
+        const ar = a.edhrec_rank ?? Number.POSITIVE_INFINITY;
+        const br = b.edhrec_rank ?? Number.POSITIVE_INFINITY;
+        return ar - br || a.name.localeCompare(b.name);
+      };
     case "cmc-asc":
       return (a, b) => (a.cmc ?? 0) - (b.cmc ?? 0) || a.name.localeCompare(b.name);
     case "cmc-desc":

@@ -25,6 +25,7 @@ export type Card = {
   toughness: string | null;
   loyalty: string | null;
   released_at: string | null;
+  edhrec_rank: number | null;
 };
 
 export type DeckSlot = { name: string; count: number };
